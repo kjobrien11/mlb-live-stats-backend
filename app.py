@@ -1,3 +1,7 @@
 import statsapi
-sched = statsapi.schedule(start_date='07/01/2018',end_date='07/31/2018',team=143,opponent=121)
-print(sched)
+from datetime import date
+
+today = date.today()
+todays_schedule = statsapi.schedule(date=today)
+game_pks = [game['game_id'] for game in todays_schedule]
+print(game_pks)
