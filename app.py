@@ -64,8 +64,8 @@ def get_base_occupancy(game_pks):
             inning_status = f"{inning_half} {inning}"
 
             base_info.append( {
-                "home_team": home_team,
                 "away_team": away_team,
+                "home_team": home_team,
                 "outs": outs,
                 "inning_status": inning_status,
                 "base_occupancy": base_status
