@@ -57,16 +57,27 @@ def get_base_occupancy(game_pks):
             away_team = teams["away"]["name"]
 
             # Outs and inning status
-            outs = data["liveData"]["plays"]["currentPlay"]["count"]["outs"]
-            inning = data["liveData"]["linescore"]["currentInning"]
-            is_top = data["liveData"]["linescore"]["isTopInning"]
+            # outs = data["liveData"]["plays"]["currentPlay"]["count"]["outs"]
+            outs = data.get("liveData", {}) \
+                .get("plays", {}) \
+                .get("currentPlay", {}) \
+                .get("count", {}) \
+                .get("outs", -1)
+            inning = data.get("liveData", {}) \
+                .get("linescore", {}) \
+                .get("currentInning", "Has Not")
+
+            is_top = data.get("liveData", {}) \
+                .get("linescore", {}) \
+                .get("isTopInning", True)
+
             inning_half = "Top" if is_top else "Bottom"
             inning_status = f"{inning_half} {inning}"
 
-            # Score
+            # # Score
             score_data = data["liveData"]["linescore"]["teams"]
-            home_score = score_data["home"]["runs"]
-            away_score = score_data["away"]["runs"]
+            home_score = home_score = score_data["home"].get("runs", 0)
+            away_score = away_score = score_data["away"].get("runs", 0)
 
             base_info.append( {
                 "home_team": home_team,
