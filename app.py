@@ -56,6 +56,12 @@ def get_base_occupancy(game_pks):
             home_team = teams["home"]["name"]
             away_team = teams["away"]["name"]
 
+            #Game Status
+            state = data['gameData']['status']['abstractGameState']
+            isFinal = state == "Final"
+            isPreview = state == "Preview"
+            print(state)
+
             # Outs and inning status
             outs = data.get("liveData", {}) \
                 .get("plays", {}) \
@@ -98,7 +104,9 @@ def get_base_occupancy(game_pks):
                 "away_score": away_score,
                 "outs": outs,
                 "inning_status": inning_status,
-                "base_occupancy": base_status
+                "base_occupancy": base_status,
+                "is_final":isFinal,
+                "is_preview": isPreview
             })
 
         except KeyError as e:
