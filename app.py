@@ -17,8 +17,8 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup_event():
-    today = date.today()
-    todays_schedule = statsapi.schedule(date=today)
+    app.state.today = date.today()
+    todays_schedule = statsapi.schedule(date=app.state.today)
     app.state.game_pks = [game['game_id'] for game in todays_schedule]
     app.state.line_scores = []
     app.state.base_status = {}
@@ -26,9 +26,7 @@ async def startup_event():
 def retrieve_line_scores(game_pks):
     line_scores = []
     for game in game_pks:
-        print(game)
         current_line_score = statsapi.linescore(game)
-        print(current_line_score)
         line_scores.append(current_line_score)
     return line_scores
 
@@ -60,7 +58,6 @@ def get_base_occupancy(game_pks):
             state = data['gameData']['status']['abstractGameState']
             isFinal = state == "Final"
             isPreview = state == "Preview"
-            print(state)
 
             # Outs and inning status
             outs = data.get("liveData", {}) \
@@ -92,7 +89,7 @@ def get_base_occupancy(game_pks):
             else:
                 inning_status = ""
 
-            # # Score
+            # Score
             score_data = data["liveData"]["linescore"]["teams"]
             home_score = home_score = score_data["home"].get("runs", 0)
             away_score = away_score = score_data["away"].get("runs", 0)
@@ -117,10 +114,14 @@ def get_base_occupancy(game_pks):
 
 @app.get("/line-scores")
 def get_line_scores():
+    app.state.today = date.today()
+    print("Refreshing Line Scores for ", app.state.today)
     app.state.line_scores = retrieve_line_scores(app.state.game_pks)
     return app.state.line_scores
 
 @app.get("/game-information")
 def get_line_scores():
+    app.state.today = date.today()
+    print("Refreshing Game Information for ", app.state.today)
     app.state.base_status = get_base_occupancy(app.state.game_pks)
     return app.state.base_status
