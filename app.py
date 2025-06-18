@@ -116,7 +116,7 @@ def get_base_occupancy(game_pks):
 def get_line_scores():
     app.state.today = date.today()
     if(app.state.games_today != app.state.today):
-	startup_event()
+        startup_event()
     print("Refreshing Line Scores for ", app.state.today)
     app.state.line_scores = retrieve_line_scores(app.state.game_pks)
     return app.state.line_scores
