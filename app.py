@@ -16,12 +16,13 @@ app.add_middleware(
 )
 
 @app.on_event("startup")
-async def startup_event():
+def startup_event():
     app.state.today = date.today()
     todays_schedule = statsapi.schedule(date=app.state.today)
     app.state.game_pks = [game['game_id'] for game in todays_schedule]
     app.state.line_scores = []
     app.state.base_status = {}
+
 
 def retrieve_line_scores(game_pks):
     line_scores = []
@@ -114,8 +115,8 @@ def get_base_occupancy(game_pks):
 
 @app.get("/line-scores")
 def get_line_scores():
-    app.state.today = date.today()
-    if(app.state.games_today != app.state.today):
+    current_date = date.today()
+    if(app.state.today != current_date):
         startup_event()
     print("Refreshing Line Scores for ", app.state.today)
     app.state.line_scores = retrieve_line_scores(app.state.game_pks)
@@ -123,8 +124,8 @@ def get_line_scores():
 
 @app.get("/game-information")
 def get_game_info():
-    app.state.today = date.today()
-    if(app.state.games_today != app.state.today):
+    current_date = date.today()
+    if(app.state.today != current_date):
         startup_event()
     print("Refreshing Game Information for ", app.state.today)
     app.state.base_status = get_base_occupancy(app.state.game_pks)
